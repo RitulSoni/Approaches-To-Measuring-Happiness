@@ -1,59 +1,81 @@
 # Approaches to Measuring Happiness
 
-A research project investigating novel methodologies for measuring happiness and subjective well-being using Large Language Models (LLMs) to analyze Reddit content and validate against traditional self-reported measures.
+A comprehensive research project investigating novel computational methodologies for measuring happiness and subjective well-being using Large Language Models (LLMs) and sentiment propagation techniques to analyze Reddit content, validated against traditional self-reported measures.
 
 ## 📋 Project Overview
 
-This study explores the effectiveness of using OpenAI's GPT-4o-mini model to evaluate happiness levels in Reddit comments and compares these AI-generated scores with users' self-reported subjective well-being (SWB) measures. The research aims to validate whether LLM-based sentiment analysis can serve as a reliable proxy for measuring happiness at scale.
+This study explores multiple approaches to automated happiness measurement, comparing the effectiveness of different computational methods for evaluating subjective well-being in social media content. The research employs three distinct methodologies:
+
+1. **LLM-Based Happiness Analysis**: Using OpenAI's GPT-4o-mini model to directly evaluate happiness levels in Reddit comments
+2. **Sentiment Propagation (SentProp)**: Implementing graph-based sentiment propagation using Word2Vec embeddings and psycholinguistic seed words
+3. **Comparative Validation**: Cross-validating both approaches against users' self-reported subjective well-being (SWB) measures
 
 ### Research Objectives
 
-- **Primary Goal**: Evaluate the correlation between LLM-generated happiness scores and traditional subjective well-being measures
+- **Primary Goal**: Evaluate the correlation between computational happiness scores and traditional subjective well-being measures
 - **Secondary Goals**: 
-  - Develop a scalable methodology for measuring happiness in social media content
-  - Assess the validity and reliability of AI-based happiness measurement
-  - Provide insights into digital well-being assessment techniques
+  - Develop scalable methodologies for measuring happiness in social media content
+  - Compare effectiveness of different AI-based approaches to happiness measurement
+  - Assess validity, reliability, and temporal stability of automated happiness assessment
+  - Provide insights into digital well-being assessment techniques for large-scale analysis
 
 ## 🔬 Methodology
 
 ### Data Collection
-- **Platform**: Reddit comments and posts
-- **Survey Data**: Self-reported subjective well-being scores (SWB_Q1, SWB_Q2)
+- **Platform**: Reddit comments and posts from diverse subreddits
+- **Survey Data**: Self-reported subjective well-being scores
+  - **Q1**: Short-term happiness metric ("How happy are you right now?")
+  - **Q2**: Long-term satisfaction metric ("How satisfied are you with your life?")
+- **Dataset Size**: 375,947 total entries from 992 unique users
 - **Sampling Strategy**: Stratified sampling based on user activity levels
   - Under 25 comments: 10 users
   - 25-99 comments: 10 users  
   - 100-999 comments: 10 users
   - 1000+ comments: 10 users
 
-### LLM Analysis Pipeline
-1. **Text Preprocessing**: Clean and prepare Reddit comments for analysis
-2. **Happiness Scoring**: Use GPT-4o-mini to rate happiness on a 1-10 scale
-3. **Aggregation**: Calculate average happiness scores per user
-4. **Validation**: Compare LLM scores with self-reported SWB measures
+### Approach 1: LLM-Based Analysis Pipeline
+1. **Data Preprocessing**: Filter content posted before survey responses to ensure temporal validity
+2. **Happiness Scoring**: Use GPT-4o-mini to rate happiness on a 1-10 scale with systematic prompting
+3. **Batch Processing**: Efficient processing with progress tracking and resume capabilities
+4. **Aggregation**: Calculate average happiness scores per user
+5. **Validation**: Compare LLM scores with self-reported SWB measures
+
+### Approach 2: Sentiment Propagation (SentProp) Method
+1. **Text Preprocessing**: Clean and prepare Reddit comments using NLTK
+2. **Word2Vec Training**: Train domain-specific word embeddings (300-dimensional vectors)
+3. **Seed Word Selection**: Use XANEW psycholinguistic norms to identify high/low sentiment words
+4. **Graph Construction**: Build k-nearest neighbor graphs based on word similarity
+5. **Sentiment Propagation**: Implement random walk algorithm to propagate sentiment scores
+6. **Multi-dimensional Analysis**: Generate Valence, Arousal, and Dominance scores
+7. **User Scoring**: Aggregate word-level sentiment scores to user-level happiness measures
 
 ### Statistical Analysis
-- Pearson correlation analysis between LLM scores and SWB measures
+- Pearson correlation analysis between computational scores and SWB measures
 - Cross-validation of happiness measurement methodologies
-- Assessment of score consistency and reliability
+- Temporal analysis of correlation patterns
+- Assessment of score consistency and reliability across different time windows
 
 ## 📁 Project Structure
 
 ```
 Approaches-To-Measuring-Happiness/
-├── README.md                          # Project documentation
-├── Code/                              # Source code and analysis
-│   ├── LLM_Score.py                  # Main analysis script
-│   ├── llm_score.ipynb               # Jupyter notebook implementation
+├── README.md                          # Comprehensive project documentation
+├── Code/                              # Source code and analysis notebooks
+│   ├── IntroToHappinessSurvey.ipynb  # Exploratory data analysis and survey insights
+│   ├── LLM_Score.py                  # Original LLM analysis script
+│   ├── LLM_Score_Final.py            # Production LLM scoring with batch processing
+│   ├── llm_score.ipynb               # Interactive LLM analysis notebook
+│   ├── SentProp_Score-2.ipynb        # Sentiment propagation implementation
 │   └── requirements.txt              # Python dependencies
-├── data/                             # Datasets
-│   ├── RedditDataUTF-8.csv          # Reddit comments and survey data
-│   └── merged_data.csv               # Processed results
-├── images/                           # Figures and visualizations
+├── data/                             # Datasets and processed results
+│   ├── RedditDataUTF-8.csv          # Main dataset with Reddit comments and survey data
+│   └── merged_data.csv               # Processed correlation results
+├── images/                           # Research figures and visualizations
 │   ├── Process Flow for LLM-Based Analysis.png
-│   ├── Figure 3.2.1.png - Figure 5.4.b.png    # Research figures
+│   ├── Figure 3.2.1.png - Figure 5.4.b.png    # Research result visualizations
 │   └── Matplotlib Chart.png
-├── Approaches to Measuring Happiness.pdf        # Research paper
-└── Final Poster CS598.pptx.pdf                 # Conference poster
+├── Approaches to Measuring Happiness.pdf        # Full research paper
+└── Final Poster CS598.pptx.pdf                 # Conference presentation
 ```
 
 ## 🚀 Getting Started
@@ -61,8 +83,9 @@ Approaches-To-Measuring-Happiness/
 ### Prerequisites
 
 - Python 3.7+
-- OpenAI API key
+- OpenAI API key (for LLM analysis)
 - Required Python packages (see requirements.txt)
+- XANEW psycholinguistic database (for SentProp method)
 
 ### Installation
 
@@ -85,75 +108,198 @@ echo "OPENAI_API_KEY=your_api_key_here" > Code/.env
 
 ### Usage
 
-#### Option 1: Run the Python Script
-```bash
-cd Code/
-python LLM_Score.py
-```
+#### Method 1: LLM-Based Analysis
 
-#### Option 2: Use the Jupyter Notebook
+**Option A: Interactive Analysis**
 ```bash
 cd Code/
 jupyter notebook llm_score.ipynb
 ```
 
-### Key Functions
+**Option B: Batch Processing Script**
+```bash
+cd Code/
+python LLM_Score_Final.py
+```
 
-- **`get_happiness_score(text)`**: Analyzes text using GPT-4o-mini and returns happiness score (1-10)
-- **`assign_group(count)`**: Categorizes users based on comment frequency
-- **Statistical analysis**: Computes correlations between LLM scores and SWB measures
+**Option C: Original Implementation**
+```bash
+cd Code/
+python LLM_Score.py
+```
+
+#### Method 2: Sentiment Propagation Analysis
+
+```bash
+cd Code/
+jupyter notebook SentProp_Score-2.ipynb
+```
+
+#### Method 3: Exploratory Data Analysis
+
+```bash
+cd Code/
+jupyter notebook IntroToHappinessSurvey.ipynb
+```
+
+### Key Components
+
+#### LLM Analysis (`LLM_Score_Final.py`)
+- **`process_and_update_reddit_data()`**: Main processing function with batch support
+- **`get_llm_score()`**: Analyzes individual text using GPT-4o and returns happiness score
+- **Temporal filtering**: Ensures content predates survey responses
+- **Progress tracking**: Estimates remaining processing time for large datasets
+
+#### Sentiment Propagation (`SentProp_Score-2.ipynb`)
+- **Word2Vec training**: Domain-specific embedding generation
+- **Graph construction**: k-NN similarity networks
+- **Sentiment propagation**: Random walk algorithm implementation
+- **Multi-dimensional scoring**: Valence, Arousal, Dominance analysis
+- **User aggregation**: Content-level to user-level score mapping
+
+#### Data Exploration (`IntroToHappinessSurvey.ipynb`)
+- **Dataset overview**: Comprehensive statistics and distributions
+- **User activity analysis**: Comment frequency patterns
+- **Subreddit analysis**: Platform-specific happiness patterns
+- **Survey response analysis**: Q1 vs Q2 comparison and validation
 
 ## 📊 Dataset Information
 
 ### Reddit Data Structure
-- **User ID**: Anonymous user identifier
-- **Content**: Reddit comments/posts text
-- **Timestamp**: Content creation time
-- **Metadata**: Upvotes, subreddit, content type
-- **Survey Data**: Self-reported well-being scores (Q1, Q2)
+- **Username**: Anonymous user identifier
+- **PostID**: Unique identifier for each post/comment
+- **Type**: Submission or Comment
+- **Content**: Reddit comment/post text
+- **ContentTimestamp**: Content creation time
+- **SurveyTimestamp**: Survey response time
+- **TimeDifferenceHours**: Time between content and survey
+- **Metadata**: Upvotes, subreddit, parent relationships
+- **Survey Data**: Self-reported well-being scores (Q1: 1-10, Q2: 1-10)
 
-### Sample Data Processing
-The analysis focuses on a stratified sample of users to ensure balanced representation across different activity levels while managing computational costs and API limitations.
+### Data Statistics
+- **Total entries**: 375,947 rows
+- **Unique users**: 992 participants
+- **Q1 responses**: 539 users (short-term happiness)
+- **Q2 responses**: 453 users (long-term satisfaction)
+- **Average content length**: 23.4 words per comment
+- **Top subreddits**: AskReddit, teenagers, memes, AskMen
 
 ## 📈 Key Findings
 
-The research demonstrates the potential for LLM-based happiness measurement as a scalable alternative to traditional survey methods, with specific insights into:
+### LLM-Based Analysis Results
+- **Correlation with self-reported scores**: 0.1563 (p < 0.0001)
+- **Model consistency**: Temperature=0 ensures deterministic outputs
+- **Processing efficiency**: Batch processing with progress tracking
+- **Temporal validity**: Content filtered to precede survey responses
 
-- Correlation patterns between AI-generated and self-reported happiness scores
-- Effectiveness of different prompting strategies for sentiment analysis
-- Scalability considerations for large-scale happiness measurement
-- Limitations and biases in automated happiness assessment
+### Sentiment Propagation Results
+- **Valence-Happiness Correlation**: 
+  - Q1: 0.1575 (p < 0.0001)
+  - Q2: 0.2191 (p < 0.0001)
+- **Arousal-Happiness Correlation**:
+  - Q1: -0.0940 (p < 0.0001)
+  - Q2: -0.1332 (p < 0.0001)
+- **Dominance-Happiness Correlation**:
+  - Q1: 0.1996 (p < 0.0001)
+  - Q2: 0.2038 (p < 0.0001)
 
-*Detailed results and statistical analyses are available in the research paper.*
+### Cross-Method Validation
+- **LLM-SentProp Correlation**: Strong correlation between methods validates approach
+- **Temporal stability**: Correlations maintain significance across different time windows
+- **Method complementarity**: Different approaches capture distinct aspects of happiness
+
+### Research Contributions
+- **Methodological innovation**: Novel application of sentiment propagation to happiness measurement
+- **Scalability demonstration**: Automated methods suitable for large-scale social media analysis
+- **Validation framework**: Comprehensive comparison against self-reported measures
+- **Temporal analysis**: Investigation of happiness measurement stability over time
 
 ## 🔧 Technical Implementation
 
 ### LLM Configuration
-- **Model**: GPT-4o-mini
-- **Temperature**: 0 (deterministic outputs)
-- **Max Tokens**: 5
-- **Prompt**: Systematic happiness rating instruction
+- **Model**: GPT-4o-mini (cost-effective with good performance)
+- **Temperature**: 0 (deterministic outputs for reproducibility)
+- **Max Tokens**: 1000 (sufficient for numerical responses)
+- **Prompt Engineering**: Systematic happiness rating instructions
 
-### Rate Limiting
-- 1-second delay between API calls to respect OpenAI rate limits
-- Error handling for failed API requests
-- Batch processing capabilities for large datasets
+### Sentiment Propagation Parameters
+- **Word2Vec**: 300-dimensional vectors, skip-gram architecture
+- **k-NN Graph**: k=10 nearest neighbors for word similarity
+- **Random Walk**: α=0.85 propagation parameter, 100 iterations
+- **Seed Words**: XANEW 90th/10th percentile thresholds
+
+### Processing Optimizations
+- **Batch Processing**: Configurable batch sizes for efficient processing
+- **Progress Tracking**: Time estimation for large datasets
+- **Error Handling**: Robust handling of API failures and data inconsistencies
+- **Memory Management**: Efficient processing of large datasets
 
 ## ⚠️ Limitations
 
-- **API Costs**: Large-scale analysis requires significant OpenAI API usage
-- **Rate Limits**: Processing speed limited by API call restrictions  
-- **Bias Considerations**: LLM may have inherent biases in happiness assessment
-- **Context Limitations**: Short text snippets may lack sufficient context
-- **Generalizability**: Results specific to Reddit user population
+### Technical Limitations
+- **API Costs**: Large-scale LLM analysis requires significant OpenAI API usage
+- **Rate Limits**: Processing speed constrained by API call restrictions
+- **Context Window**: Short text snippets may lack sufficient context for accurate assessment
+- **Model Bias**: LLM may have inherent biases in happiness assessment
+
+### Methodological Limitations
+- **Platform Specificity**: Results specific to Reddit user population and culture
+- **Temporal Constraints**: Content filtered to precede survey responses
+- **Sample Size**: Limited number of users with complete survey responses
+- **Self-Selection Bias**: Participants may not represent general population
+
+### Data Limitations
+- **Missing Values**: Some LLM scores missing due to API failures
+- **Temporal Misalignment**: Variable time gaps between content and survey
+- **Content Quality**: Varying quality and length of Reddit comments
+- **Survey Validity**: Self-reported measures subject to response bias
 
 ## 🔮 Future Work
 
-- **Multi-platform Validation**: Extend analysis to other social media platforms
-- **Temporal Analysis**: Investigate happiness patterns over time
-- **Demographic Studies**: Analyze happiness patterns across user demographics
-- **Model Comparison**: Compare different LLM models for happiness assessment
-- **Real-time Applications**: Develop real-time happiness monitoring systems
+### Methodological Extensions
+- **Multi-platform Validation**: Extend analysis to Twitter, Facebook, Instagram
+- **Longitudinal Studies**: Track happiness changes over extended periods
+- **Demographic Analysis**: Investigate happiness patterns across user demographics
+- **Cultural Validation**: Test approaches across different cultural contexts
+
+### Technical Improvements
+- **Model Comparison**: Compare different LLM models (GPT-4, Claude, Llama)
+- **Ensemble Methods**: Combine multiple approaches for improved accuracy
+- **Real-time Processing**: Develop streaming analysis capabilities
+- **Multimodal Analysis**: Incorporate images, videos, and other media types
+
+### Application Domains
+- **Mental Health Monitoring**: Clinical applications for depression screening
+- **Policy Analysis**: Evaluate impact of social policies on population wellbeing
+- **Product Development**: Assess user satisfaction and engagement
+- **Social Research**: Large-scale studies of societal happiness trends
+
+## 📊 Code Files Overview
+
+### `IntroToHappinessSurvey.ipynb`
+- **Purpose**: Comprehensive exploratory data analysis
+- **Key Features**: Dataset statistics, distribution analysis, visualization
+- **Outputs**: Data quality assessment, user activity patterns, survey response analysis
+
+### `LLM_Score.py`
+- **Purpose**: Original LLM-based happiness scoring implementation
+- **Key Features**: Stratified sampling, OpenAI API integration, correlation analysis
+- **Outputs**: User-level happiness scores, correlation with SWB measures
+
+### `LLM_Score_Final.py`
+- **Purpose**: Production-ready LLM scoring with batch processing
+- **Key Features**: Batch processing, progress tracking, temporal filtering
+- **Outputs**: Processed dataset with LLM scores, batch processing reports
+
+### `llm_score.ipynb`
+- **Purpose**: Interactive notebook for LLM analysis
+- **Key Features**: Step-by-step analysis, visualization, documentation
+- **Outputs**: Interactive analysis results, statistical summaries
+
+### `SentProp_Score-2.ipynb`
+- **Purpose**: Sentiment propagation implementation
+- **Key Features**: Word2Vec training, graph construction, multi-dimensional analysis
+- **Outputs**: Valence/Arousal/Dominance scores, correlation analysis, temporal validation
 
 ## 📝 Citation
 
@@ -176,10 +322,16 @@ This project is available for academic and research purposes. Please respect Red
 
 Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests to improve the methodology or extend the analysis.
 
+Areas for contribution:
+- Additional sentiment analysis methods
+- Improved temporal analysis techniques
+- Cross-platform validation studies
+- Enhanced visualization and reporting tools
+
 ## 📧 Contact
 
 For questions about this research or collaboration opportunities, please open an issue in this repository.
 
 ---
 
-**Note**: This research was conducted as part of CS598 coursework. Ensure you have proper API credentials and respect rate limits when running the analysis. 
+**Note**: This research was conducted as part of CS598 coursework investigating computational approaches to happiness measurement. Ensure you have proper API credentials and respect rate limits when running the analysis. The study demonstrates the feasibility of automated happiness assessment but should be validated in specific application contexts. 
