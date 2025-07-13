@@ -86,6 +86,21 @@ Approaches-To-Measuring-Happiness/
 - OpenAI API key (for LLM analysis)
 - Required Python packages (see requirements.txt)
 - XANEW psycholinguistic database (for SentProp method)
+- Jupyter Notebook/Lab for interactive analysis
+
+### Dependencies
+
+```
+openai
+python-dotenv
+requests
+pandas
+scipy
+numpy
+nltk (for text preprocessing)
+gensim (for Word2Vec)
+matplotlib/seaborn (for visualizations)
+```
 
 ### Installation
 
@@ -106,6 +121,13 @@ pip install -r Code/requirements.txt
 echo "OPENAI_API_KEY=your_api_key_here" > Code/.env
 ```
 
+4. Download NLTK data (required for text preprocessing):
+```python
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+```
+
 ### Usage
 
 #### Method 1: LLM-Based Analysis
@@ -116,10 +138,12 @@ cd Code/
 jupyter notebook llm_score.ipynb
 ```
 
-**Option B: Batch Processing Script**
+**Option B: Batch Processing Script** (Recommended for large datasets)
 ```bash
 cd Code/
+# Configure your API key first
 python LLM_Score_Final.py
+# Script includes automatic progress tracking and time estimation
 ```
 
 **Option C: Original Implementation**
@@ -145,10 +169,12 @@ jupyter notebook IntroToHappinessSurvey.ipynb
 ### Key Components
 
 #### LLM Analysis (`LLM_Score_Final.py`)
-- **`process_and_update_reddit_data()`**: Main processing function with batch support
-- **`get_llm_score()`**: Analyzes individual text using GPT-4o and returns happiness score
-- **Temporal filtering**: Ensures content predates survey responses
-- **Progress tracking**: Estimates remaining processing time for large datasets
+- **`process_and_update_reddit_data()`**: Main processing function with configurable batch support
+- **`get_llm_score()`**: Analyzes individual text using GPT-4o with error handling and returns happiness score (1-10)
+- **Temporal filtering**: Automatically filters content to ensure it predates survey responses (`ContentTimestamp <= SurveyTimestamp`)
+- **Progress tracking**: Real-time time estimation and processing statistics for large datasets
+- **Robust error handling**: Graceful handling of API failures with NaN fallback values
+- **Memory efficiency**: Processes data in configurable batches to manage memory usage
 
 #### Sentiment Propagation (`SentProp_Score-2.ipynb`)
 - **Word2Vec training**: Domain-specific embedding generation
@@ -188,9 +214,11 @@ jupyter notebook IntroToHappinessSurvey.ipynb
 
 ### LLM-Based Analysis Results
 - **Correlation with self-reported scores**: 0.1563 (p < 0.0001)
-- **Model consistency**: Temperature=0 ensures deterministic outputs
-- **Processing efficiency**: Batch processing with progress tracking
-- **Temporal validity**: Content filtered to precede survey responses
+- **Statistical significance**: Strong evidence of correlation between computational and self-reported happiness measures
+- **Model consistency**: Temperature=0 ensures deterministic outputs across runs
+- **Processing efficiency**: Batch processing with real-time progress tracking and time estimation
+- **Temporal validity**: Automatic filtering ensures content predates survey responses
+- **Robustness**: Error handling maintains data integrity during large-scale processing
 
 ### Sentiment Propagation Results
 - **Valence-Happiness Correlation**: 
@@ -217,10 +245,12 @@ jupyter notebook IntroToHappinessSurvey.ipynb
 ## 🔧 Technical Implementation
 
 ### LLM Configuration
-- **Model**: GPT-4o-mini (cost-effective with good performance)
+- **Model**: GPT-4o (high-performance model for accurate happiness assessment)
 - **Temperature**: 0 (deterministic outputs for reproducibility)
 - **Max Tokens**: 1000 (sufficient for numerical responses)
-- **Prompt Engineering**: Systematic happiness rating instructions
+- **Prompt Engineering**: Systematic happiness rating instructions with role-based prompting
+- **System Prompt**: "You are an assistant that rates the happiness expressed in a given text on a scale from 1 to 10, where 1 is very unhappy and 10 is very happy. Only provide the numerical score."
+- **Batch Processing**: Configurable batch sizes with progress tracking and time estimation
 
 ### Sentiment Propagation Parameters
 - **Word2Vec**: 300-dimensional vectors, skip-gram architecture
@@ -229,18 +259,26 @@ jupyter notebook IntroToHappinessSurvey.ipynb
 - **Seed Words**: XANEW 90th/10th percentile thresholds
 
 ### Processing Optimizations
-- **Batch Processing**: Configurable batch sizes for efficient processing
-- **Progress Tracking**: Time estimation for large datasets
-- **Error Handling**: Robust handling of API failures and data inconsistencies
-- **Memory Management**: Efficient processing of large datasets
+- **Batch Processing**: Configurable batch sizes (default: 100) for efficient processing
+- **Progress Tracking**: Real-time time estimation and completion percentage for large datasets
+- **Error Handling**: Robust handling of API failures and data inconsistencies with graceful fallbacks
+- **Memory Management**: Efficient processing of large datasets with controlled memory usage
+- **Resume Capability**: Processing can be interrupted and resumed from checkpoints
+
+### Performance Metrics
+- **Dataset Size**: Successfully processes 375,947+ Reddit entries
+- **Processing Speed**: Variable based on API rate limits and batch configuration
+- **Error Rate**: Minimal data loss due to robust error handling with NaN fallbacks
+- **Memory Efficiency**: Processes large datasets without memory overflow issues
 
 ## ⚠️ Limitations
 
 ### Technical Limitations
-- **API Costs**: Large-scale LLM analysis requires significant OpenAI API usage
-- **Rate Limits**: Processing speed constrained by API call restrictions
+- **API Costs**: Large-scale LLM analysis requires significant OpenAI API usage (consider using GPT-4o-mini for cost optimization)
+- **Rate Limits**: Processing speed constrained by API call restrictions (current implementation includes error handling)
 - **Context Window**: Short text snippets may lack sufficient context for accurate assessment
 - **Model Bias**: LLM may have inherent biases in happiness assessment
+- **Error Recovery**: Some scores may be missing due to API failures (handled with NaN values)
 
 ### Methodological Limitations
 - **Platform Specificity**: Results specific to Reddit user population and culture
@@ -261,6 +299,7 @@ jupyter notebook IntroToHappinessSurvey.ipynb
 - **Longitudinal Studies**: Track happiness changes over extended periods
 - **Demographic Analysis**: Investigate happiness patterns across user demographics
 - **Cultural Validation**: Test approaches across different cultural contexts
+- **Real-time Analysis**: Implement streaming processing for live happiness monitoring
 
 ### Technical Improvements
 - **Model Comparison**: Compare different LLM models (GPT-4, Claude, Llama)
